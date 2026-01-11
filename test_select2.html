@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test de Select2</title>
+    <!-- Usamos una versión estable y conocida de Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Estilo mínimo para que se vea */
+        body { font-family: sans-serif; padding: 20px; }
+        .select2-container { width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Página de Prueba para Select2</h1>
+
+    <label for="test-select">Selecciona un proveedor:</label>
+    <select id="test-select" style="width: 300px;">
+        <option value="">-- Seleccione --</option>
+        <option value="1">Proveedor A</option>
+        <option value="2">Proveedor B</option>
+        <option value="3">Proveedor C</option>
+    </select>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#test-select').select2({
+                placeholder: "Buscar un proveedor...",
+                allowClear: true
+            });
+        });
+    </script>
+</body>
+</html>
