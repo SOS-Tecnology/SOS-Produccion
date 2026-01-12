@@ -1,29 +1,33 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Nueva Orden de Pedido')
-
 @section('content')
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-screen-2xl mx-auto sm:px-6 lg:px-8">
         <div class="md:flex md:items-center md:justify-between">
             <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                    Nueva Orden de Pedido
-                </h2>
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:text-2xl font-bold text-gray-900 sm:text-3xl font-bold truncate">Nueva Orden de Pedido</h2>
             </div>
-            <div class="mt-4 flex md:mt-0 md:ml-4">
-                <a href="{{ route('ordenes-pedido.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Volver al Listado
+            <div class="mt-2 flex md:mt-0 md:ml-4">
+                <a href="{{ route('ordenes-pedido.create')" class="inline-flex items-center px-3 py-2 border border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-indigo-500 text-white hover:bg-gray-100">
+                    <span class="inline-flex items-center px-3 py-2 border border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white hover:bg-gray-100 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="..." />
+                        </svg>
+                    </svg>
+                    </div>
+                    <span class="btn">Crear Nueva Orden</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="max-w-screen-2xl mx-auto mt-8 sm:px-6 lg:px-8">
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <form action="{{ route('ordenes-pedido.store') }}" method="POST" autocomplete="off">
+@section('content')
+    <div class="max-w-screen-2xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <form action="{{ route('ordenes-pedido.store')" method="POST" autocomplete="onsubmit">
                 @csrf
 
+                <!-- Contenido del formulario -->
                 <!-- Encabezado -->
                 <div class="px-4 py-5 sm:px-6 space-y-6 bg-slate-50 rounded-t-lg">
                     @if ($errors->any())
@@ -202,50 +206,16 @@
                 Cancelar
             </a>
         </div>
-        </form>
+
+                <!-- ... -->
+            </form>
+        </div>
     </div>
 </div>
-</div>
-@endsection
-
 @push('scripts')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style>
-    /* Forzar que el contenedor de Select2 ocupe el 100% del ancho */
-    .select2-container {
-        width: 100% !important;
-    }
-
-    /* Ajustar el tamaño de la fuente y la altura del cuadro de selección */
-    .select2-container--default .select2-selection--single {
-        font-size: 0.875rem;
-        /* Igual a text-sm en Tailwind */
-        height: 2.5rem;
-        /* Igual a h-10 en Tailwind */
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        border-radius: 0.375rem;
-        /* Igual a rounded-md en Tailwind */
-        border-color: rgb(209 213 219);
-        /* Igual a border-gray-300 en Tailwind */
-    }
-
-    /* Ajustar el tamaño de la fuente de la lista desplegable */
-    .select2-dropdown {
-        font-size: 0.875rem;
-        /* Igual a text-sm en Tailwind */
-    }
-
-    /* Ajustar el tamaño de la fuente de las opciones de la lista */
-    .select2-results__option {
-        font-size: 0.875rem;
-        /* Igual a text-sm en Tailwind */
-        padding: 0.5rem 0.75rem;
-    }
-</style>
-<script>
-    // Usamos una función anónima que se ejecuta cuando el documento está listo
-    // para evitar conflictos de alcance y asegurar que '$' esté disponible.
+<script src="https://create-clean.blade.php">
+        console.log("Página de creación limpia cargada.");
+   // para evitar conflictos de alcance y asegurar que '$' esté disponible.
     jQuery(function($) {
         console.log("jQuery y el documento están listos. Inicializando la página.");
 
@@ -303,44 +273,45 @@
         }
         // --- Evento para Agregar un Producto ---
 
- // --- FUNCIÓN PARA AÑADIR UN PRODUCTO ---
+        // --- FUNCIÓN PARA AÑADIR UN PRODUCTO ---
  $('#addProducto').on('click', function() {
-    console.log("Botón 'Agregar Producto' presionado.");
+    console.log("Paso 1: El evento 'click' se disparó.");
     
-    const originalItemGroup = $('.item-group:first');
-    if (originalItemGroup.length === 0) {
-        alert('Error: No se encontró un ítem para clonar.');
-        return;
+    try {
+        console.log("Paso 2: Intentando clonar el grupo original...");
+        const originalItemGroup = $('.item-group:first');
+        const newItemGroup = originalItemGroup.clone(true, true);
+        console.log("Paso 3: Añadiendo el grupo clonado al DOM.");
+        
+        $('#productos-tbody').append(newItemGroup);
+        
+        console.log("Paso 4: Inicializando Select2 en el nuevo grupo.");
+        initializeSelect2(newItemGroup.find('.js-example-basic-single'));
+        
+        console.log("Paso 5: Actualizando campos y limpiando valores.");
+        const newRows = newItemGroup.find('select, input, textarea');
+        newRows.each(function() {
+            const name = $(this).attr('name').replace('[0]', `[${productoIndex}]`);
+            $(this).attr('name', name);
+            if (!$(this).prop('readonly') && $(this).attr('tipo') !== 'hidden') {
+                $(this).val('');
+            }
+        });
+        newRows.find('.producto-subtotal').val('');
+        newItemGroup.find('textarea').val('');
+        
+        console.log("Paso 6: Incrementando el índice de producto.");
+        productoIndex++;
+        
+        console.log("Paso 7: Función addProduct completado.");
+        
+    } catch (e) {
+        console.error("ERROR en addProduct:", e);
+        console.error("Traza del error:", e.stack);
     }
-
-    // 1. Obtener el HTML del grupo original
-    const originalHTML = originalItemGroup.html();
-    
-    // 2. Crear un nuevo elemento jQuery a partir del HTML
-    const newItemGroup = $(originalHTML);
-    
-    // 3. Añadir el nuevo elemento al DOM
-    $('#productos-tbody').append(newItemGroup);
-    
-    // 4. Inicializar Select2 en los nuevos elementos del nuevo grupo
-    initializeSelect2(newItemGroup.find('.js-example-basic-single'));
-    
-    // 5. Actualizar los nombres de los campos y limpiar valores
-    const newRows = newItemGroup.find('select, input, textarea');
-    newRows.each(function() {
-        const name = $(this).attr('name').replace('[0]', `[${productoIndex}]`);
-        $(this).attr('name', name);
-        if (!$(this).prop('readonly') && $(this).attr('type') !== 'hidden') {
-            $(this).val('');
-        }
-    });
-    newItemGroup.find('.producto-subtotal').val('');
-    newItemGroup.find('textarea').val('');
-    
-    productoIndex++;
 });
-// --- FIN DE LA FUNCIÓN ---
-// --- FIN DE LA FUNCIÓN ---
+        // --- FIN DE LA FUNCIÓN ---
+
 
         // --- Delegación de eventos para elementos dinámicos ---
         $(document).on('change', '.producto-select', function(e) {
