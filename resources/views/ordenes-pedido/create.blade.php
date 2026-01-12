@@ -304,39 +304,44 @@
         // --- Evento para Agregar un Producto ---
 
         // --- FUNCIÓN PARA AÑADIR UN PRODUCTO ---
-        $('#addProducto').on('click', function() {
-            console.log("Botón 'Agregar Producto' presionado. Usando clone(true, true) para clonar con eventos y datos.");
-
-            const originalItemGroup = $('.item-group:first');
-            if (originalItemGroup.length === 0) {
-                alert('Error: No se encontró un ítem para clonar.');
-                return;
+ $('#addProducto').on('click', function() {
+    console.log("Paso 1: El evento 'click' se disparó.");
+    
+    try {
+        console.log("Paso 2: Intentando clonar el grupo original...");
+        const originalItemGroup = $('.item-group:first');
+        const newItemGroup = originalItemGroup.clone(true, true);
+        console.log("Paso 3: Añadiendo el grupo clonado al DOM.");
+        
+        $('#productos-tbody').append(newItemGroup);
+        
+        console.log("Paso 4: Inicializando Select2 en el nuevo grupo.");
+        initializeSelect2(newItemGroup.find('.js-example-basic-single'));
+        
+        console.log("Paso 5: Actualizando campos y limpiando valores.");
+        const newRows = newItemGroup.find('select, input, textarea');
+        newRows.each(function() {
+            const name = $(this).attr('name').replace('[0]', `[${productoIndex}]`);
+            $(this).attr('name', name);
+            if (!$(this).prop('readonly') && $(this).attr('tipo') !== 'hidden') {
+                $(this).val('');
             }
-
-            // Clonar el grupo completo, incluyendo eventos y datos
-            const newItemGroup = originalItemGroup.clone(true, true);
-
-            // Añadir el nuevo grupo al DOM
-            $('#productos-tbody').append(newItemGroup);
-
-            // Inicializar Select2 en el nuevo grupo
-            initializeSelect2(newItemGroup.find('.js-example-basic-single'));
-
-            // Actualizar los nombres de los campos en el nuevo grupo
-            const newRows = newItemGroup.find('select, input, textarea');
-            newRows.each(function(index, element) {
-                const name = $(this).attr('name').replace('[0]', `[${productoIndex}]`);
-                $(this).attr('name', name);
-                if (!$(this).prop('clone', true)) {
-                    $(this).val('');
-                }
-            });
-            newRows.find('.producto-subtotal').val('');
-            newItemGroup.find('textarea').val('');
-
-            productoIndex++;
         });
+        newRows.find('.producto-subtotal').val('');
+        newItemGroup.find('textarea').val('');
+        
+        console.log("Paso 6: Incrementando el índice de producto.");
+        productoIndex++;
+        
+        console.log("Paso 7: Función addProduct completado.");
+        
+    } catch (e) {
+        console.error("ERROR en addProduct:", e);
+        console.error("Traza del error:", e.stack);
+    }
+});
         // --- FIN DE LA FUNCIÓN ---
+
 
         // --- Delegación de eventos para elementos dinámicos ---
         $(document).on('change', '.producto-select', function(e) {

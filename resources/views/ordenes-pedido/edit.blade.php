@@ -18,19 +18,19 @@
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
-                    
+
                     <form action="{{ route('ordenes-pedido.update', $orden->documento) }}" method="POST" id="formOrdenPedido">
                         @csrf
                         @method('PUT')
-                        
+
                         <!-- Encabezado de la orden -->
                         <div class="row">
                             <div class="col-md-3">
@@ -45,9 +45,9 @@
                                     <select class="form-control" id="codcp" name="codcp" required>
                                         <option value="">Seleccione un cliente</option>
                                         @foreach($clientes as $cliente)
-                                            <option value="{{ $cliente->codcli }}" {{ $orden->codcp == $cliente->codcli ? 'selected' : '' }}>
-                                                {{ $cliente->nombrecli }}
-                                            </option>
+                                        <option value="{{ $cliente->codcli }}" {{ $orden->codcp == $cliente->codcli ? 'selected' : '' }}>
+                                            {{ $cliente->nombrecli }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -58,9 +58,9 @@
                                     <select class="form-control" id="codsuc" name="codsuc">
                                         <option value="">Seleccione primero un cliente</option>
                                         @foreach($sucursales as $sucursal)
-                                            <option value="{{ $sucursal->codsuc }}" {{ $orden->codsuc == $sucursal->codsuc ? 'selected' : '' }}>
-                                                {{ $sucursal->nombresuc }}
-                                            </option>
+                                        <option value="{{ $sucursal->codsuc }}" {{ $orden->codsuc == $sucursal->codsuc ? 'selected' : '' }}>
+                                            {{ $sucursal->nombresuc }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -77,7 +77,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -98,9 +98,9 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <!-- Productos de la orden -->
                         <div class="row">
                             <div class="col-12">
@@ -121,54 +121,54 @@
                                         </thead>
                                         <tbody>
                                             @foreach($orden->detalles as $index => $detalle)
-                                                <tr class="producto-row">
-                                                    <td>
-                                                        <select class="form-control producto-select" name="productos[{{ $index }}][codr]" required>
-                                                            <option value="">Seleccione un producto</option>
-                                                            @foreach($productos as $producto)
-                                                                <option value="{{ $producto->codr }}" {{ $detalle->codr == $producto->codr ? 'selected' : '' }}>
-                                                                    {{ $producto->codr }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control producto-descr" name="productos[{{ $index }}][descr]" value="{{ $detalle->descr }}" readonly>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" class="form-control producto-cantidad" name="productos[{{ $index }}][cantidad]" value="{{ $detalle->cantidad }}" step="0.01" min="0.01" required>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" class="form-control producto-valor" name="productos[{{ $index }}][valor]" value="{{ $detalle->valor }}" step="0.01" min="0" required>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control producto-subtotal" name="productos[{{ $index }}][subtotal]" value="{{ number_format($detalle->cantidad * $detalle->valor, 2) }}" readonly>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control" name="productos[{{ $index }}][codcolor]" value="{{ $detalle->codcolor }}">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control" name="productos[{{ $index }}][codtalla]" value="{{ $detalle->codtalla }}">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-sm remove-producto">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                            <tr class="producto-row">
+                                                <td>
+                                                    <select class="form-control producto-select" name="productos[{{ $index }}][codr]" required>
+                                                        <option value="">Seleccione un producto</option>
+                                                        @foreach($productos as $producto)
+                                                        <option value="{{ $producto->codr }}" {{ $detalle->codr == $producto->codr ? 'selected' : '' }}>
+                                                            {{ $producto->codr }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control producto-descr" name="productos[{{ $index }}][descr]" value="{{ $detalle->descr }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control producto-cantidad" name="productos[{{ $index }}][cantidad]" value="{{ $detalle->cantidad }}" step="0.01" min="0.01" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control producto-valor" name="productos[{{ $index }}][valor]" value="{{ $detalle->valor }}" step="0.01" min="0" required>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control producto-subtotal" name="productos[{{ $index }}][subtotal]" value="{{ number_format($detalle->cantidad * $detalle->valor, 2) }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="productos[{{ $index }}][codcolor]" value="{{ $detalle->codcolor }}">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="productos[{{ $index }}][codtalla]" value="{{ $detalle->codtalla }}">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm remove-producto">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-                                
+
                                 <button type="button" class="btn btn-success" id="addProducto">
                                     <i class="fas fa-plus"></i> Agregar Producto
                                 </button>
                             </div>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <!-- Resumen de totales -->
                         <div class="row">
                             <div class="col-md-6">
@@ -200,7 +200,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-12 text-right">
                                 <button type="submit" class="btn btn-primary">
@@ -221,114 +221,118 @@
 
 @push('scripts')
 <script>
- $(document).ready(function() {
-    let productoIndex = {{ $orden->detalles->count() }};
-    
-    // Función para calcular el subtotal de un producto
-    function calcularSubtotal(row) {
-        const cantidad = parseFloat($(row).find('.producto-cantidad').val()) || 0;
-        const valor = parseFloat($(row).find('.producto-valor').val()) || 0;
-        const subtotal = cantidad * valor;
-        $(row).find('.producto-subtotal').val(subtotal.toFixed(2));
-        calcularTotales();
-    }
-    
-    // Función para calcular los totales
-    function calcularTotales() {
-        let subtotal = 0;
-        
-        $('.producto-row').each(function() {
-            const valorSubtotal = parseFloat($(this).find('.producto-subtotal').val()) || 0;
-            subtotal += valorSubtotal;
-        });
-        
-        const iva = subtotal * 0.16;
-        const total = subtotal + iva;
-        
-        $('#subtotal').val(subtotal.toFixed(2));
-        $('#iva').val(iva.toFixed(2));
-        $('#total').val(total.toFixed(2));
-    }
-    
-    // Evento para agregar un nuevo producto
-    $('#addProducto').click(function() {
-        const newRow = $('.producto-row:first').clone();
-        
-        // Actualizar los nombres y IDs de los campos
-        newRow.find('select, input').each(function() {
-            const name = $(this).attr('name').replace(/\[\d+\]/, `[${productoIndex}]`);
-            $(this).attr('name', name);
-            if ($(this).attr('type') !== 'hidden') {
-                $(this).val('');
+    $(document).ready(function() {
+        let productoIndex = {
+            {
+                $orden - > detalles - > count()
             }
-        });
-        
-        // Limpiar los valores
-        newRow.find('.producto-descr').val('');
-        newRow.find('.producto-subtotal').val('');
-        
-        // Agregar la nueva fila a la tabla
-        $('#tablaProductos tbody').append(newRow);
-        productoIndex++;
-    });
-    
-    // Evento para eliminar una fila de producto
-    $(document).on('click', '.remove-producto', function() {
-        if ($('#tablaProductos tbody tr').length > 1) {
-            $(this).closest('tr').remove();
+        };
+
+        // Función para calcular el subtotal de un producto
+        function calcularSubtotal(row) {
+            const cantidad = parseFloat($(row).find('.producto-cantidad').val()) || 0;
+            const valor = parseFloat($(row).find('.producto-valor').val()) || 0;
+            const subtotal = cantidad * valor;
+            $(row).find('.producto-subtotal').val(subtotal.toFixed(2));
             calcularTotales();
-        } else {
-            alert('Debe tener al menos un producto en la orden');
         }
-    });
-    
-    // Evento para obtener la información del producto seleccionado
-    $(document).on('change', '.producto-select', function() {
-        const codr = $(this).val();
-        const row = $(this).closest('tr');
-        
-        if (codr) {
-            $.get(`/ordenes-pedido/producto/${codr}`, function(data) {
-                row.find('.producto-descr').val(data.descr);
-                row.find('.producto-valor').val(0);
-                calcularSubtotal(row);
+
+        // Función para calcular los totales
+        function calcularTotales() {
+            let subtotal = 0;
+
+            $('.producto-row').each(function() {
+                const valorSubtotal = parseFloat($(this).find('.producto-subtotal').val()) || 0;
+                subtotal += valorSubtotal;
             });
-        } else {
-            row.find('.producto-descr').val('');
-            row.find('.producto-valor').val('');
-            row.find('.producto-subtotal').val('');
-            calcularTotales();
+
+            const iva = subtotal * 0.16;
+            const total = subtotal + iva;
+
+            $('#subtotal').val(subtotal.toFixed(2));
+            $('#iva').val(iva.toFixed(2));
+            $('#total').val(total.toFixed(2));
         }
-    });
-    
-    // Eventos para calcular el subtotal cuando cambia la cantidad o el valor
-    $(document).on('input', '.producto-cantidad, .producto-valor', function() {
-        calcularSubtotal($(this).closest('tr'));
-    });
-    
-    // Evento para obtener las sucursales del cliente seleccionado
-    $('#codcp').change(function() {
-        const codcli = $(this).val();
-        const sucursalSelect = $('#codsuc');
-        
-        if (codcli) {
-            $.get(`/ordenes-pedido/sucursales/${codcli}`, function(data) {
-                sucursalSelect.empty();
-                
-                if (data.length > 0) {
-                    sucursalSelect.append('<option value="">Seleccione una sucursal</option>');
-                    data.forEach(function(sucursal) {
-                        sucursalSelect.append(`<option value="${sucursal.codsuc}">${sucursal.nombresuc}</option>`);
-                    });
-                } else {
-                    sucursalSelect.append('<option value="">El cliente no tiene sucursales registradas</option>');
+
+        // Evento para agregar un nuevo producto
+        $('#addProducto').click(function() {
+            const newRow = $('.producto-row:first').clone();
+
+            // Actualizar los nombres y IDs de los campos
+            newRow.find('select, input').each(function() {
+                const name = $(this).attr('name').replace(/\[\d+\]/, `[${productoIndex}]`);
+                $(this).attr('name', name);
+                if ($(this).attr('type') !== 'hidden') {
+                    $(this).val('');
                 }
             });
-        } else {
-            sucursalSelect.empty();
-            sucursalSelect.append('<option value="">Seleccione primero un cliente</option>');
-        }
+
+            // Limpiar los valores
+            newRow.find('.producto-descr').val('');
+            newRow.find('.producto-subtotal').val('');
+
+            // Agregar la nueva fila a la tabla
+            $('#tablaProductos tbody').append(newRow);
+            productoIndex++;
+        });
+
+        // Evento para eliminar una fila de producto
+        $(document).on('click', '.remove-producto', function() {
+            if ($('#tablaProductos tbody tr').length > 1) {
+                $(this).closest('tr').remove();
+                calcularTotales();
+            } else {
+                alert('Debe tener al menos un producto en la orden');
+            }
+        });
+
+        // Evento para obtener la información del producto seleccionado
+        $(document).on('change', '.producto-select', function() {
+            const codr = $(this).val();
+            const row = $(this).closest('tr');
+
+            if (codr) {
+                $.get(`/ordenes-pedido/producto/${codr}`, function(data) {
+                    row.find('.producto-descr').val(data.descr);
+                    row.find('.producto-valor').val(0);
+                    calcularSubtotal(row);
+                });
+            } else {
+                row.find('.producto-descr').val('');
+                row.find('.producto-valor').val('');
+                row.find('.producto-subtotal').val('');
+                calcularTotales();
+            }
+        });
+
+        // Eventos para calcular el subtotal cuando cambia la cantidad o el valor
+        $(document).on('input', '.producto-cantidad, .producto-valor', function() {
+            calcularSubtotal($(this).closest('tr'));
+        });
+
+        // Evento para obtener las sucursales del cliente seleccionado
+        $('#codcp').change(function() {
+            const codcli = $(this).val();
+            const sucursalSelect = $('#codsuc');
+
+            if (codcli) {
+                $.get(`/ordenes-pedido/sucursales/${codcli}`, function(data) {
+                    sucursalSelect.empty();
+
+                    if (data.length > 0) {
+                        sucursalSelect.append('<option value="">Seleccione una sucursal</option>');
+                        data.forEach(function(sucursal) {
+                            sucursalSelect.append(`<option value="${sucursal.codsuc}">${sucursal.nombresuc}</option>`);
+                        });
+                    } else {
+                        sucursalSelect.append('<option value="">El cliente no tiene sucursales registradas</option>');
+                    }
+                });
+            } else {
+                sucursalSelect.empty();
+                sucursalSelect.append('<option value="">Seleccione primero un cliente</option>');
+            }
+        });
     });
-});
 </script>
 @endpush

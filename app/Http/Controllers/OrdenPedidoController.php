@@ -92,24 +92,24 @@ class OrdenPedidoController extends Controller // Asegúrate de que esté extend
             }
         }
         $request->merge(['productos' => $productos]);
-    // --- DEPURACIÓN CLAVE ---
-    Log::info('Datos recibidos en el store:', $request->all());
-    // ------------------------
-    $request->validate([
-        'documento' => 'required|string|max:8',
-        'codcp' => 'required|exists:geclientes,codcli',
-        'codsuc' => 'nullable|exists:geclientesaux,codsuc',
-        'fecha' => 'required|date',
-        'fechent' => 'required|date|after_or_equal:fecha',
-        'comen' => 'nullable|string',
-        'productos' => 'required|array|min:1',
-        'productos.*.codr' => 'required|exists:inrefinv,codr',
-        'productos.*.cantidad' => 'required|numeric|min:1',
-        'productos.*.valor' => 'required|numeric|min:0',
-        'productos.*.codcolor' => 'nullable|string',
-        'productos.*.codtalla' => 'nullable|string',
-        'productos.*.comencpo' => 'nullable|string'
-    ]);
+        // --- DEPURACIÓN CLAVE ---
+        Log::info('Datos recibidos en el store:', $request->all());
+        // ------------------------
+        $request->validate([
+            'documento' => 'required|string|max:8',
+            'codcp' => 'required|exists:geclientes,codcli',
+            'codsuc' => 'nullable|exists:geclientesaux,codsuc',
+            'fecha' => 'required|date',
+            'fechent' => 'required|date|after_or_equal:fecha',
+            'comen' => 'nullable|string',
+            'productos' => 'required|array|min:1',
+            'productos.*.codr' => 'required|exists:inrefinv,codr',
+            'productos.*.cantidad' => 'required|numeric|min:1',
+            'productos.*.valor' => 'required|numeric|min:0',
+            'productos.*.codcolor' => 'nullable|string',
+            'productos.*.codtalla' => 'nullable|string',
+            'productos.*.comencpo' => 'nullable|string'
+        ]);
 
         try {
             DB::beginTransaction();
@@ -163,22 +163,19 @@ class OrdenPedidoController extends Controller // Asegúrate de que esté extend
                     'numreg' => str_pad($index + 1, 3, '0', STR_PAD_LEFT)
                 ]);
             }
-            //fwrite($logFile, date('Y-m-d H:i:s') . " - Detalles creados.\n");
 
             DB::commit();
-            // fwrite($logFile, date('Y-m-d H:i:s') . " - Transacción confirmada.\n");
-            //fclose($logFile);
 
             return redirect()->route('ordenes-pedido.index')
                 ->with('success', 'Orden de pedido creada correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // --- ESCRIBIR EL ERROR EN NUESTRO ARCHIVO DE LOG ---
-            /* fwrite($logFile, date('Y-m-d H:i:s') . " - ERROR CAPTURADO: " . $e->getMessage() . "\n");
-            fwrite($logFile, $e->getTraceAsString() . "\n\n");
-            fclose($logFile);*/
-            // --- FIN DE ESCRITURA DE ERROR ---
+        // --- CAPTURA EL ERROR ESPECÍFICO ---
+        // --- CAPTURA DEL ERROR ---
+        Log::error('ERROR al guardar la orden de pedido:', $e->getMessage());
+        Log::error('Traza del error:', $e->getTraceAsString());
+        // -----------------------------
 
             return back()->withInput()
                 ->with('error', 'Error al crear la orden de pedido: ' . $e->getMessage());

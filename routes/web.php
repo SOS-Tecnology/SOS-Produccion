@@ -33,17 +33,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
-
-
-// --- RUTAS DE LOS MÓDULOS (PROTEGIDAS) ---
 Route::middleware('auth')->group(function () {
     Route::resource('satelites', SateliteController::class);
     Route::resource('fichas-tecnicas', FichaTecnicaController::class);
-    // Aquí irán las demás rutas de la aplicación
-});
 
-// Rutas para el módulo de Órdenes de Pedido
-Route::middleware('auth')->group(function () {
     Route::get('/ordenes-pedido', [OrdenPedidoController::class, 'index'])->name('ordenes-pedido.index');
     Route::get('/ordenes-pedido/create', [OrdenPedidoController::class, 'create'])->name('ordenes-pedido.create');
     Route::post('/ordenes-pedido', [OrdenPedidoController::class, 'store'])->name('ordenes-pedido.store');
@@ -51,8 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/ordenes-pedido/{documento}/edit', [OrdenPedidoController::class, 'edit'])->name('ordenes-pedido.edit');
     Route::put('/ordenes-pedido/{documento}', [OrdenPedidoController::class, 'update'])->name('ordenes-pedido.update');
     Route::delete('/ordenes-pedido/{documento}', [OrdenPedidoController::class, 'destroy'])->name('ordenes-pedido.destroy');
-    
-    // Rutas para obtener datos via AJAX
+
+    // AJAX
     Route::get('/ordenes-pedido/sucursales/{codcli}', [OrdenPedidoController::class, 'getSucursales'])->name('ordenes-pedido.sucursales');
     Route::get('/ordenes-pedido/producto/{codr}', [OrdenPedidoController::class, 'getProducto'])->name('ordenes-pedido.producto');
 });
