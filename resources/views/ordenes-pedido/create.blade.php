@@ -308,7 +308,7 @@
             });
         }
 
-        // --- FUNCIÓN PARA AÑADIR UN PRODUCTO (VERSIÓN FINAL) ---
+        // --- FUNCIÓN PARA AÑADIR UN PRODUCTO (VERSIÓN CON ORDEN CORRECTO) ---
         $('#addProducto').on('click', function() {
             const templateHtml = $('#producto-template').html();
             const newRows = $(templateHtml);
@@ -322,37 +322,23 @@
             // Llenar selects
             const colorSelect = newRows.find('select[name="productos[' + productoIndex + '][codcolor]"]');
             const tallaSelect = newRows.find('select[name="productos[' + productoIndex + '][codtalla]"]');
-
+            
             colorSelect.empty().append('<option value="">Seleccionar...</option>');
             tallaSelect.empty().append('<option value="">Seleccionar...</option>');
             window.coloresData.forEach(c => colorSelect.append(`<option value="${c.codcolor}">${c.nombrecolor}</option>`));
             window.tallasData.forEach(t => tallaSelect.append(`<option value="${t.codtalla}">${t.nombretalla}</option>`));
 
-            // Añadir las dos nuevas filas al tbody principal
-            $('#productos-tbody').append(newRows);
+            // --- ¡LA CLAVE! Añadir las filas antes del botón ---
+            // Buscamos el div que contiene el botón y añadimos las nuevas filas justo antes que él.
+            newRows.insertBefore('#addProducto');
+            // ---------------------------------------------------
 
             // Inicializar Select2
             initializeSelect2(newRows.find('.js-example-basic-single'));
-
+            
             productoIndex++;
         });
-
-        // --- FUNCIÓN PARA ELIMINAR UN ÍTEM (CORREGIDA) ---
-        $(document).on('click', '.eliminar-producto', function(e) {
-            e.preventDefault();
-            const firstRow = $(this).closest('tr.item-group'); // Encuentra la primera fila del ítem
-            const secondRow = firstRow.next('tr'); // Encuentra la segunda fila (la de comentarios)
-
-            const currentItemCount = $('.item-group').length;
-            if (currentItemCount > 1) {
-                firstRow.remove();
-                secondRow.remove();
-            } else {
-                alert('Debe tener al menos un producto.');
-            }
-        });
-        // --- CÁLCULO DE SUBTOTAL EN CAMBIO DE CANTIDAD O VALOR ---
-
+        // --- FIN DE LA FUNCIÓN ---
 
         $(document).on('change', '.producto-select', function() {
             calcularSubtotal($(this).closest('tr'));
@@ -361,16 +347,34 @@
             calcularSubtotal($(this).closest('tr'));
         });
 
+        // --- FUNCIÓN PARA ELIMINAR UN ÍTEM (VERSIÓN DEFINITIVA) ---
+        // --- FUNCIÓN PARA ELIMINAR UN ÍTEM (CON DEPURACIÓN) ---
         $(document).on('click', '.eliminar-producto', function(e) {
             e.preventDefault();
-            const itemGroup = $(this).closest('tbody.item-group');
+
+            // 1. Encuentra la fila donde está el botón (la segunda fila del ítem)
+            const secondRow = $(this).closest('tr');
+            console.log("Fila del botón (segunda fila):", secondRow);
+
+            // 2. Encuentra la fila anterior (la primera fila del ítem)
+            const firstRow = secondRow.prev();
+            console.log("Fila anterior (primera fila):", firstRow);
+
+            // 3. Cuenta cuántos ítems hay
             const currentItemCount = $('.item-group').length;
+            console.log("Cantidad total de ítems:", currentItemCount);
+
             if (currentItemCount > 1) {
-                itemGroup.remove();
+                // 4. Elimina ambas filas
+                firstRow.remove();
+                secondRow.remove();
+                console.log("Ítem eliminado.");
             } else {
                 alert('Debe tener al menos un producto.');
             }
         });
+        // --- FIN DE LA FUNCIÓN ---
+
 
         $('#codcp').change(function() {
             const codcli = $(this).val();
