@@ -1,11 +1,16 @@
-// 1. Primero, importa jQuery
-import $ from 'jquery';
+// resources/js/app.js
 
-// 2. Luego, hazlo disponible globalmente ANTES de importar cualquier otra cosa que lo necesite
+// 1. Importa jQuery y Select2
+import $ from 'jquery';
+import select2 from 'select2';
+
+// 2. Haz que jQuery esté disponible globalmente
 window.$ = window.jQuery = $;
 
-// 3. Ahora sí, importa Bootstrap (que ya encontrará $ disponible)
+// 3. Conecta Select2 manualmente a jQuery
+select2($);
+
+// 4. Importa Bootstrap (que ya encontrará $ disponible)
 import './bootstrap';
 
-// console.log('--- app.js se ha cargado ---');
-// console.log('El tipo de $ es:', typeof $);
+// console.log('--- app.js se ha cargado y Select2 ha sido conectado manualmente ---');
