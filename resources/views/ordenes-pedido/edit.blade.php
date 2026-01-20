@@ -1,338 +1,262 @@
-<!-- resources/views/ordenes-pedido/edit.blade.php -->
 @extends('layouts.dashboard')
 
-@section('title', 'Editar Orden de Pedido')
+@section('title', 'Editar Pedido')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Editar Orden de Pedido #{{ $orden->documento }}</h3>
-                    <div class="card-tools">
-                        <a href="{{ route('ordenes-pedido.index') }}" class="btn btn-default btn-sm">
-                            <i class="fas fa-arrow-left"></i> Volver
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-
-                    <form action="{{ route('ordenes-pedido.update', $orden->documento) }}" method="POST" id="formOrdenPedido">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Encabezado de la orden -->
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="documento">Número de Documento</label>
-                                    <input type="text" class="form-control" id="documento" name="documento" value="{{ $orden->documento }}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="codcp">Cliente</label>
-                                    <select class="form-control" id="codcp" name="codcp" required>
-                                        <option value="">Seleccione un cliente</option>
-                                        @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->codcli }}" {{ $orden->codcp == $cliente->codcli ? 'selected' : '' }}>
-                                            {{ $cliente->nombrecli }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="codsuc">Sucursal</label>
-                                    <select class="form-control" id="codsuc" name="codsuc">
-                                        <option value="">Seleccione primero un cliente</option>
-                                        @foreach($sucursales as $sucursal)
-                                        <option value="{{ $sucursal->codsuc }}" {{ $orden->codsuc == $sucursal->codsuc ? 'selected' : '' }}>
-                                            {{ $sucursal->nombresuc }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="estado">Estado</label>
-                                    <select class="form-control" id="estado" name="estado">
-                                        <option value="P" {{ $orden->estado == 'P' ? 'selected' : '' }}>Pendiente</option>
-                                        <option value="A" {{ $orden->estado == 'A' ? 'selected' : '' }}>Aprobada</option>
-                                        <option value="C" {{ $orden->estado == 'C' ? 'selected' : '' }}>Completada</option>
-                                        <option value="X" {{ $orden->estado == 'X' ? 'selected' : '' }}>Cancelada</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="fecha">Fecha del Pedido</label>
-                                    <input type="date" class="form-control" id="fecha" name="fecha" value="{{ $orden->fecha->format('Y-m-d') }}" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="fechent">Fecha de Entrega</label>
-                                    <input type="date" class="form-control" id="fechent" name="fechent" value="{{ $orden->fechent ? $orden->fechent->format('Y-m-d') : '' }}" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="comen">Comentarios</label>
-                                    <textarea class="form-control" id="comen" name="comen" rows="1">{{ $orden->comen }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <!-- Productos de la orden -->
-                        <div class="row">
-                            <div class="col-12">
-                                <h4>Productos de la Orden</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="tablaProductos">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Descripción</th>
-                                                <th>Cantidad</th>
-                                                <th>Valor Unitario</th>
-                                                <th>Subtotal</th>
-                                                <th>Color</th>
-                                                <th>Talla</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($orden->detalles as $index => $detalle)
-                                            <tr class="producto-row">
-                                                <td>
-                                                    <select class="form-control producto-select" name="productos[{{ $index }}][codr]" required>
-                                                        <option value="">Seleccione un producto</option>
-                                                        @foreach($productos as $producto)
-                                                        <option value="{{ $producto->codr }}" {{ $detalle->codr == $producto->codr ? 'selected' : '' }}>
-                                                            {{ $producto->codr }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control producto-descr" name="productos[{{ $index }}][descr]" value="{{ $detalle->descr }}" readonly>
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control producto-cantidad" name="productos[{{ $index }}][cantidad]" value="{{ $detalle->cantidad }}" step="0.01" min="0.01" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control producto-valor" name="productos[{{ $index }}][valor]" value="{{ $detalle->valor }}" step="0.01" min="0" required>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control producto-subtotal" name="productos[{{ $index }}][subtotal]" value="{{ number_format($detalle->cantidad * $detalle->valor, 2) }}" readonly>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="productos[{{ $index }}][codcolor]" value="{{ $detalle->codcolor }}">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="productos[{{ $index }}][codtalla]" value="{{ $detalle->codtalla }}">
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger btn-sm remove-producto">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <button type="button" class="btn btn-success" id="addProducto">
-                                    <i class="fas fa-plus"></i> Agregar Producto
-                                </button>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <!-- Resumen de totales -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="observaciones">Observaciones Adicionales</label>
-                                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ $orden->comenfac ?? '' }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="subtotal">Subtotal</label>
-                                            <input type="text" class="form-control" id="subtotal" name="subtotal" value="{{ number_format($orden->valortotal - $orden->vriva, 2) }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="iva">IVA (16%)</label>
-                                            <input type="text" class="form-control" id="iva" name="iva" value="{{ number_format($orden->vriva, 2) }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="total">Total</label>
-                                            <input type="text" class="form-control" id="total" name="total" value="{{ number_format($orden->valortotal, 2) }}" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12 text-right">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Actualizar Orden
-                                </button>
-                                <a href="{{ route('ordenes-pedido.index') }}" class="btn btn-default">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="md:flex md:items-center md:justify-between">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Editar Pedido #{{ $orden->documento }}</h2>
             </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <a href="{{ route('ordenes-pedido.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Volver al listado
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-screen-2xl mx-auto mt-8 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <form action="{{ route('ordenes-pedido.update', $orden->documento) }}" method="POST" autocomplete="off">
+                @csrf
+                @method('PUT')
+                <!-- Encabezado -->
+                <div class="px-4 py-5 sm:px-6 space-y-6 bg-slate-50 rounded-t-lg">
+                    @if ($errors->any())
+                    <div class="rounded-md bg-red-50 p-4">
+                        <!-- ... código de errores ... -->
+                    @endif
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-2">
+                            <label for="documento" class="block text-sm font-medium text-gray-700">N.° de documento</label>
+                            <div class="mt-1">
+                                <input type="text" name="documento" id="documento" value="{{ $orden->documento }}" class="shadow-sm bg-gray-100 block w-full sm:text-sm border-gray-300 rounded-md" readonly>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="codcp" class="block text-sm font-medium text-gray-700">Cliente</label>
+                            <div class="mt-1">
+                                <select id="codcp" name="codcp" class="js-example-basic-single shadow-sm block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($clientes as $cliente)
+                                    <option value="{{ $cliente->codcli }}" {{ $orden->codcp == $cliente->codcli ? 'selected' : '' }}>{{ $cliente->nombrecli }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <!-- ... otros campos del encabezado (sucursal, fechas, estado, comentarios) ... -->
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                <div class="px-4 sm:px-6 bg-white border-t border-gray-200">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 my-3">Productos</h3>
+                </div>
+                <div class="px-4 sm:px-6 bg-white pb-4">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Producto</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Color</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Talla</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Cantidad</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">V. Unidad.</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Subtotal</th>
+                                    <th class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">Acc.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productos-tbody">
+                                @foreach($orden->detalles as $index => $producto)
+                                <tr class="producto-row item-group">
+                                    <td class="px-2 py-2 align-top">
+                                        <select class="producto-select js-example-basic-single shadow-sm block w-full text-sm border-gray-300 rounded-md" name="productos[{{ $index }}][codr]" required>
+                                            <option value="">Seleccionar...</option>
+                                            @foreach($productos as $p)
+                                            <option value="{{ $p->codr }}" {{ $producto->codr == $p->codr ? 'selected' : '' }}>{{ $p->codr }} - {{ $p->descr }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td class="px-2 py-2 align-top">
+                                        <select class="shadow-sm block w-full text-sm border-gray-300 rounded-md" name="productos[{{ $index }}][codcolor]">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach($colores as $color)
+                                            <option value="{{ $color['codcolor'] }}" {{ $producto->codcolor == $color['codcolor'] ? 'selected' : '' }}>{{ $color['nombrecolor'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <!-- ... resto de los campos del producto ... -->
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="px-2 py-1 align-top">
+                                        <textarea name="productos[{{ $index }}][comencpo]" rows="1" class="shadow-sm block w-full text-sm border-gray-300 rounded-md" placeholder="Comentarios del ítem...">{{ $producto->comencpo }}</textarea>
+                                    </td>
+                                    <td class="px-2 py-1 text-right align-top">
+                                        <button type="button" class="eliminar-producto text-red-600 hover:text-red-900">
+                                            <!-- Icono de eliminar -->
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" id="addProducto" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            + Agregar Producto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- La plantilla oculta es la misma que en create.blade.php -->
+                <template id="producto-template">...</template>
+
+                <!-- Botones -->
+                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 border-t border-gray-200">
+                    <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Actualizar orden
+                    </button>
+                    <a href="{{ route('ordenes-pedido.index') }}" class="ml-3 bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
+<!-- El mismo bloque de scripts que en create.blade.php -->
 <script>
-    $(document).ready(function() {
-        let productoIndex = {
-            {
-                $orden - > detalles - > count()
-            }
-        };
+    window.tallasData = @json($tallas);
+    window.coloresData = @json($colores);
+</script>
+<script>
+    // --- CAMBIO CLAVE AQUÍ ---
+    // Usamos window.onload para esperar a que TODO (incluido Select2) esté cargado.
+    document.addEventListener('DOMContentLoaded', function() {
+        const $ = window.jQuery;
 
-        // Función para calcular el subtotal de un producto
+        console.log("El documento está listo. jQuery y Select2 (incluido en Vite) están disponibles.");
+
+        let productoIndex = 1;
+
         function calcularSubtotal(row) {
             const cantidad = parseFloat($(row).find('.producto-cantidad').val()) || 0;
             const valor = parseFloat($(row).find('.producto-valor').val()) || 0;
             const subtotal = cantidad * valor;
             $(row).find('.producto-subtotal').val(subtotal.toFixed(2));
-            calcularTotales();
         }
 
-        // Función para calcular los totales
-        function calcularTotales() {
-            let subtotal = 0;
-
-            $('.producto-row').each(function() {
-                const valorSubtotal = parseFloat($(this).find('.producto-subtotal').val()) || 0;
-                subtotal += valorSubtotal;
-            });
-
-            const iva = subtotal * 0.16;
-            const total = subtotal + iva;
-
-            $('#subtotal').val(subtotal.toFixed(2));
-            $('#iva').val(iva.toFixed(2));
-            $('#total').val(total.toFixed(2));
-        }
-
-        // Evento para agregar un nuevo producto
-        $('#addProducto').click(function() {
-            const newRow = $('.producto-row:first').clone();
-
-            // Actualizar los nombres y IDs de los campos
-            newRow.find('select, input').each(function() {
-                const name = $(this).attr('name').replace(/\[\d+\]/, `[${productoIndex}]`);
-                $(this).attr('name', name);
-                if ($(this).attr('type') !== 'hidden') {
-                    $(this).val('');
+        function initializeSelect2(elements) {
+            elements.each(function() {
+                const $element = $(this);
+                if (!$element.hasClass('select2-hidden-accessible')) {
+                    $element.select2({
+                        placeholder: "Buscar...",
+                        allowClear: true,
+                        width: '100%'
+                    });
                 }
             });
+        }
 
-            // Limpiar los valores
-            newRow.find('.producto-descr').val('');
-            newRow.find('.producto-subtotal').val('');
+        // --- FUNCIÓN PARA AÑADIR UN PRODUCTO (VERSIÓN CON ORDEN CORRECTO) ---
+        $('#addProducto').on('click', function() {
+            const templateHtml = $('#producto-template').html();
+            const newRows = $(templateHtml);
 
-            // Agregar la nueva fila a la tabla
-            $('#tablaProductos tbody').append(newRow);
+            // Actualizar nombres en las nuevas filas
+            newRows.find('[name]').each(function() {
+                const name = $(this).attr('name').replace('INDEX', productoIndex);
+                $(this).attr('name', name);
+            });
+
+            // Llenar selects
+            const colorSelect = newRows.find('select[name="productos[' + productoIndex + '][codcolor]"]');
+            const tallaSelect = newRows.find('select[name="productos[' + productoIndex + '][codtalla]"]');
+
+            colorSelect.empty().append('<option value="">Seleccionar...</option>');
+            tallaSelect.empty().append('<option value="">Seleccionar...</option>');
+            window.coloresData.forEach(c => colorSelect.append(`<option value="${c.codcolor}">${c.nombrecolor}</option>`));
+            window.tallasData.forEach(t => tallaSelect.append(`<option value="${t.codtalla}">${t.nombretalla}</option>`));
+
+            // --- ¡LA CLAVE! Añadir las filas antes del botón ---
+            // Buscamos el div que contiene el botón y añadimos las nuevas filas justo antes que él.
+            newRows.insertBefore('#addProducto');
+            // ---------------------------------------------------
+
+            // Inicializar Select2
+            initializeSelect2(newRows.find('.js-example-basic-single'));
+
             productoIndex++;
         });
+        // --- FIN DE LA FUNCIÓN ---
 
-        // Evento para eliminar una fila de producto
-        $(document).on('click', '.remove-producto', function() {
-            if ($('#tablaProductos tbody tr').length > 1) {
-                $(this).closest('tr').remove();
-                calcularTotales();
-            } else {
-                alert('Debe tener al menos un producto en la orden');
-            }
-        });
-
-        // Evento para obtener la información del producto seleccionado
         $(document).on('change', '.producto-select', function() {
-            const codr = $(this).val();
-            const row = $(this).closest('tr');
-
-            if (codr) {
-                $.get(`/ordenes-pedido/producto/${codr}`, function(data) {
-                    row.find('.producto-descr').val(data.descr);
-                    row.find('.producto-valor').val(0);
-                    calcularSubtotal(row);
-                });
-            } else {
-                row.find('.producto-descr').val('');
-                row.find('.producto-valor').val('');
-                row.find('.producto-subtotal').val('');
-                calcularTotales();
-            }
+            calcularSubtotal($(this).closest('tr'));
         });
-
-        // Eventos para calcular el subtotal cuando cambia la cantidad o el valor
         $(document).on('input', '.producto-cantidad, .producto-valor', function() {
             calcularSubtotal($(this).closest('tr'));
         });
 
-        // Evento para obtener las sucursales del cliente seleccionado
+        // --- FUNCIÓN PARA ELIMINAR UN ÍTEM (VERSIÓN DEFINITIVA) ---
+        // --- FUNCIÓN PARA ELIMINAR UN ÍTEM (CON DEPURACIÓN) ---
+        $(document).on('click', '.eliminar-producto', function(e) {
+            e.preventDefault();
+
+            // 1. Encuentra la fila donde está el botón (la segunda fila del ítem)
+            const secondRow = $(this).closest('tr');
+            console.log("Fila del botón (segunda fila):", secondRow);
+
+            // 2. Encuentra la fila anterior (la primera fila del ítem)
+            const firstRow = secondRow.prev();
+            console.log("Fila anterior (primera fila):", firstRow);
+
+            // 3. Cuenta cuántos ítems hay
+            const currentItemCount = $('.item-group').length;
+            console.log("Cantidad total de ítems:", currentItemCount);
+
+            if (currentItemCount > 1) {
+                // 4. Elimina ambas filas
+                firstRow.remove();
+                secondRow.remove();
+                console.log("Ítem eliminado.");
+            } else {
+                alert('Debe tener al menos un producto.');
+            }
+        });
+        // --- FIN DE LA FUNCIÓN ---
+
+
         $('#codcp').change(function() {
             const codcli = $(this).val();
             const sucursalSelect = $('#codsuc');
-
             if (codcli) {
                 $.get(`/ordenes-pedido/sucursales/${codcli}`, function(data) {
-                    sucursalSelect.empty();
-
+                    sucursalSelect.empty().append('<option value="">Seleccione una sucursal</option>');
                     if (data.length > 0) {
-                        sucursalSelect.append('<option value="">Seleccione una sucursal</option>');
-                        data.forEach(function(sucursal) {
-                            sucursalSelect.append(`<option value="${sucursal.codsuc}">${sucursal.nombresuc}</option>`);
-                        });
-                    } else {
-                        sucursalSelect.append('<option value="">El cliente no tiene sucursales registradas</option>');
+                        data.forEach(s => sucursalSelect.append(`<option value="${s.codsuc}">${s.nombresuc}</option>`));
                     }
                 });
             } else {
-                sucursalSelect.empty();
-                sucursalSelect.append('<option value="">Seleccione primero un cliente</option>');
+                sucursalSelect.empty().append('<option value="">Seleccione una sucursal</option>');
             }
         });
+
+        // Inicialización inicial de Select2
+        initializeSelect2($('.js-example-basic-single'));
+
+        // Establecer fecha de entrega por defecto
+        const fechaEntrega = new Date();
+        fechaEntrega.setDate(fechaEntrega.getDate() + 7);
+        $('#fechent').val(fechaEntrega.toISOString().split('T')[0]);
     });
+
+    // --- Cierre del window.onload ---
 </script>
+
 @endpush

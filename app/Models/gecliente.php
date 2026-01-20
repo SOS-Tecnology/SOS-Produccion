@@ -16,7 +16,16 @@ class Gecliente extends Model
 
     public $timestamps = false;
 
+    public function ordenes() 
+    { 
+        return $this->hasMany(Cabezamov::class, 'codcp', 'codcli'); 
+    }
+
     protected $fillable = [
         'nombrecli',
     ];
+        // Asegúrate de que este método exista
+    public function cabzamovs() {
+        return $this->hasMany(Cabezamov::class, 'codcp', 'codcli');
+    }
 }

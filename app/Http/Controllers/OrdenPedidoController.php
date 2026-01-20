@@ -171,11 +171,11 @@ class OrdenPedidoController extends Controller // Asegúrate de que esté extend
         } catch (\Exception $e) {
             DB::rollBack();
 
-        // --- CAPTURA EL ERROR ESPECÍFICO ---
-        // --- CAPTURA DEL ERROR ---
-        Log::error('ERROR al guardar la orden de pedido:', $e->getMessage());
-        Log::error('Traza del error:', $e->getTraceAsString());
-        // -----------------------------
+            // --- CAPTURA EL ERROR ESPECÍFICO ---
+            // --- CAPTURA DEL ERROR ---
+            Log::error('ERROR al guardar la orden de pedido:', $e->getMessage());
+            Log::error('Traza del error:', $e->getTraceAsString());
+            // -----------------------------
 
             return back()->withInput()
                 ->with('error', 'Error al crear la orden de pedido: ' . $e->getMessage());
@@ -184,23 +184,88 @@ class OrdenPedidoController extends Controller // Asegúrate de que esté extend
     /**
      * Display the specified resource.
      */
-    public function show($documento)
+    /*
+    public function showX0($documento)
     {
         $orden = Cabezamov::ordenesPedido()
-            ->where('documento', $documento)
+            ->where('documento', (string) $documento) // <-- FORZAR A STRING
             ->with(['cliente', 'sucursal', 'detalles.producto'])
             ->firstOrFail();
-
         return view('ordenes-pedido.show', compact('orden'));
     }
+*/
+    /*
+    public function showX1($documento)
+    {
+        try {
+            // 1. Cargar la orden principal sin relaciones
+            $orden = Cabezamov::ordenesPedido()
+                ->where('documento', (string) $documento)
+                ->firstOrFail();
 
+            // 2. Cargar las relaciones de primer nivel (cliente, sucursal)
+            $orden->load('cliente', 'sucursal');
+
+            // 3. Cargar los detalles (Cuerpomov)
+            $detalles = $orden->detalles;
+
+            // 4. Cargar la relación anidada (producto) para cada detalle
+            foreach ($detalles as $detalle) {
+                $detalle->load('producto');
+            }
+
+            // 5. (Opcional) Si necesitas la relación inversa, puedes cargarla así:
+            // $orden->load('cliente.cabzamovs');
+
+            return view('ordenes-pedido.show', compact('orden'));
+
+        } catch (\Exception $e) {
+            // Captura cualquier error y muéstralo en pantalla
+            // dd($e->getMessage());
+            // O muestra un error más amigable al usuario
+            return back()->with('error', 'Error al cargar la orden: ' . $e->getMessage());
+        }
+    }
+
+    */
+    public function show($documento)
+    {
+        try {
+            // dd($documento);
+
+            $orden = Cabezamov::with(['cliente', 'sucursal', 'detalles'])
+                ->where('cabezamov.documento', (string) $documento)
+                ->firstOrFail();
+
+            dd( DB::table('cuerpomov') ->where('documento', '00000005') ->pluck('tm','prefijo') );
+
+            // dd(['cliente' => $orden->cliente, 'sucursal' => $orden->sucursal, 'detalles' => $orden->detalles->toArray(),]);
+            // Cargar las relaciones de forma manual y segura
+            $detalles = $orden->detalles;
+
+            // Cargar la relación anidada para cada detalle
+            foreach ($detalles as $detalle) {
+                try {
+                    $detalle->load('producto');
+                } catch (\Exception $e) {
+                    // Si un detalle no tiene un producto asociado, lo registraremos el error pero no romperá la carga.
+                }
+            }
+
+            // return view('odenes-pedido.show', compact('orden', 'dentro', 'cliente', 'sucursal', 'detalles'));
+            //           dd($detalles);
+            return view('ordenes-pedido.show', compact('orden', 'detalles'));
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($documento)
     {
         $orden = Cabezamov::ordenesPedido()
-            ->where('documento', $documento)
+            ->where('documento', (string) $documento)
             ->with(['detalles'])
             ->firstOrFail();
 

@@ -21,7 +21,7 @@ use App\Http\Controllers\OrdenPedidoController;
 Route::middleware('guest')->group(function () {
     // La ruta de login está fuera para que nuestro código personalizado se ejecute
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    
+
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);

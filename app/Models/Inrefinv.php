@@ -14,9 +14,15 @@ class Inrefinv extends Model
 
     protected $primaryKey = 'codr';
     public $timestamps = false;
+    public $incrementing = false; // si codr no es autoincremental
 
     protected $fillable = [
         'descr',
         'unid',
     ];
+    
+    public function detalles()
+    {
+        return $this->hasMany(Cuerpomov::class, 'codr', 'codr');
+    }
 }

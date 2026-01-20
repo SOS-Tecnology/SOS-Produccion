@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sistema de Producción')</title>
-   <!-- CARGA JQUERY PRIMERO -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>    
+    <!-- CARGA JQUERY PRIMERO -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Mueve las líneas de Select2 AQUÍ -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -76,8 +76,9 @@
     <main class="container mx-auto p-6 max-w-5xl">
         @yield('content')
     </main>
-    {{-- Scripts Adicionales --}}    
+    {{-- Scripts Adicionales --}}
     @stack('scripts')
 
 </body>
+
 </html>
